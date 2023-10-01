@@ -6,4 +6,6 @@ public class CafeConstant {
     public static final String INVALID_DATA = "Invalid Data.";
 
     public static final String UNAUTHORIZED_ACCESS = "Unauthorized access.";
+
+    public static final String STORE_LOCATION = "C:\\Users\\PC\\Desktop\\com.inn.cafe\\Cafe_Stored_File";
 }
