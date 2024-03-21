@@ -1,0 +1,28 @@
+.float-right {
+    float: right;
+    margin-left: 75%;
+}
+
+mat-card {
+    padding: 20px;
+    
+}
+
+table {
+    width: 100%;
+}
+.mdc-card {
+    display: flex;
+    flex-direction: row;
+    box-sizing: border-box;
+}
+.example-full-width{
+    width: 80%;
+    margin-left: 10%;
+}
+.product-image {
+    width: 100px; /* Điều chỉnh kích thước ảnh theo nhu cầu */
+    height: 100px;
+    // object-fit: cover; /* Để ảnh tự động điều chỉnh kích thước và giữ tỷ lệ */
+    border-radius: 50%; /* Tùy chọn: Làm tròn góc cho ảnh */
+  }

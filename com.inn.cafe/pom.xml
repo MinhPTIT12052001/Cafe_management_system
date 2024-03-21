@@ -14,7 +14,7 @@
 	<name>Cafe Management System</name>
 	<description>Cafe Management System project</description>
 	<properties>
-		<java.version>11</java.version>
+		<java.version>17</java.version>
 	</properties>
 	<dependencies>
 		<dependency>

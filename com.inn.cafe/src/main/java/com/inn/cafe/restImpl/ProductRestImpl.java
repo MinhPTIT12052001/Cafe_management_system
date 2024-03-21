@@ -1,5 +1,7 @@
 package com.inn.cafe.restImpl;
 
+import com.inn.cafe.POJO.ImageModel;
+import com.inn.cafe.POJO.Product;
 import com.inn.cafe.constants.CafeConstant;
 import com.inn.cafe.rest.ProductRest;
 import com.inn.cafe.service.ProductService;
@@ -9,10 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
+import java.awt.*;
+import java.io.IOException;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class ProductRestImpl implements ProductRest {
@@ -20,14 +24,15 @@ public class ProductRestImpl implements ProductRest {
     @Autowired
     ProductService productService;
     @Override
-    public ResponseEntity<String> addNewProduct(Map<String, String> requestMap) {
+    public ResponseEntity<String> addNewProduct(Map<String, String> requestMap, MultipartFile[] files) {
         try {
-            return productService.addNewProduct(requestMap);
+            return productService.addNewProduct(requestMap, files);
         }catch (Exception e){
             e.printStackTrace();
         }
         return CafeUtils.getResponseEntity(CafeConstant.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
 
     @Override
     public ResponseEntity<List<ProductWrapper>> getAllProduct() {
@@ -40,9 +45,9 @@ public class ProductRestImpl implements ProductRest {
     }
 
     @Override
-    public ResponseEntity<String> updateProduct(Map<String, String> requestMap) {
+    public ResponseEntity<String> updateProduct(Map<String, String> requestMap, MultipartFile[] files) {
         try {
-            return productService.updateProduct(requestMap);
+            return productService.updateProduct(requestMap, files);
         }catch (Exception e){
             e.printStackTrace();
         }

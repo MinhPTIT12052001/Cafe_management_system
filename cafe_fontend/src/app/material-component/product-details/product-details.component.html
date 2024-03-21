@@ -1,0 +1,7 @@
+<div *ngIf="productDetails">
+    <h2>{{productDetails.name | modifyText : 'pizza' :'-discount(50%)' | modifyText : 'spagetty' : '(new product)' }}
+    </h2>
+    <p>{{productDetails.description | modifyText : 'pizza' : '-discount(50%)'| modifyText : 'spagetty' : '(new product)' }}
+    </p>
+    <p>Price: {{ productDetails.price | currency:'USD':'symbol':'1.0-0' }}</p>
+  </div>

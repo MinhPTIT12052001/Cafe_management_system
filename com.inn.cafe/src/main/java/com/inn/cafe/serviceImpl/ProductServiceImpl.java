@@ -2,6 +2,7 @@ package com.inn.cafe.serviceImpl;
 
 import com.inn.cafe.JWT.JwtFilter;
 import com.inn.cafe.POJO.Category;
+import com.inn.cafe.POJO.ImageModel;
 import com.inn.cafe.POJO.Product;
 import com.inn.cafe.constants.CafeConstant;
 import com.inn.cafe.dao.ProductDao;
@@ -12,11 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.io.IOException;
+import java.util.*;
+
+
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -26,11 +28,11 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     JwtFilter jwtFilter;
     @Override
-    public ResponseEntity<String> addNewProduct(Map<String, String> requestMap) {
+    public ResponseEntity<String> addNewProduct(Map<String, String> requestMap, MultipartFile[] files) {
         try {
             if(jwtFilter.isAdmin()){
                 if (validateProductMap(requestMap,false)){
-                    productDao.save(getProductFromMap(requestMap,false));
+                    productDao.save(getProductFromMap(requestMap,false, files));
                     return CafeUtils.getResponseEntity("Product Added Successfully.", HttpStatus.OK);
                 }else {
                     return CafeUtils.getResponseEntity(CafeConstant.INVALID_DATA,HttpStatus.BAD_REQUEST);
@@ -44,7 +46,8 @@ public class ProductServiceImpl implements ProductService {
         return CafeUtils.getResponseEntity(CafeConstant.SOMETHING_WENT_WRONG, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    private Product getProductFromMap(Map<String, String> requestMap, boolean isAdd) {
+    private Product getProductFromMap(Map<String, String> requestMap, boolean isAdd, MultipartFile[] files) throws IOException {
+
         Category category = new Category();
         category.setId(Integer.valueOf(requestMap.get("categoryId")));
 
@@ -54,11 +57,26 @@ public class ProductServiceImpl implements ProductService {
         }else {
             product.setStatus("true");
         }
+        Set<ImageModel> imageModels = uploadImage(files);
+        product.setProductImage(imageModels);
         product.setCategory(category);
         product.setName(requestMap.get("name"));
         product.setPrice(Integer.valueOf(requestMap.get("price")));
         product.setDescription(requestMap.get("description"));
         return product;
+    }
+    public Set<ImageModel> uploadImage(MultipartFile[] files) throws IOException {
+        Set<ImageModel> imageModels = new HashSet<>();
+
+        for (MultipartFile file : files) {
+            ImageModel imageModel = new ImageModel(
+                    file.getOriginalFilename(),
+                    file.getContentType(),
+                    file.getBytes()
+            );
+            imageModels.add(imageModel);
+        }
+        return imageModels;
     }
     private boolean validateProductMap(Map<String,String> requestMap, boolean validateId) {
         if(requestMap.containsKey("name")){
@@ -80,14 +98,15 @@ public class ProductServiceImpl implements ProductService {
         return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+
     @Override
-    public ResponseEntity<String> updateProduct(Map<String, String> requestmap) {
+    public ResponseEntity<String> updateProduct(Map<String, String> requestmap, MultipartFile[] files) {
         try {
             if(jwtFilter.isAdmin()){
                 if(validateProductMap(requestmap,true)){
                     Optional<Product> optional = productDao.findById(Integer.valueOf(requestmap.get("id")));
                     if(!optional.isEmpty()){
-                        Product product = getProductFromMap(requestmap,true);
+                        Product product = getProductFromMap(requestmap,true, files);
                         product.setStatus(optional.get().getStatus());
                         productDao.save(product);
                         return CafeUtils.getResponseEntity(("Product Updated Successfully."),HttpStatus.OK);

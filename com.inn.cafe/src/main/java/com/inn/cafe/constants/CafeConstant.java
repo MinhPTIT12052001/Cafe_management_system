@@ -7,5 +7,6 @@ public class CafeConstant {
 
     public static final String UNAUTHORIZED_ACCESS = "Unauthorized access.";
 
-    public static final String STORE_LOCATION = "C:\\Users\\PC\\Desktop\\com.inn.cafe\\Cafe_Stored_File";
+    public static final String STORE_LOCATION = "D:\\cafe-springboot\\Cafe_management_system\\com.inn.cafe\\Cafe_Stored_File";
+
 }

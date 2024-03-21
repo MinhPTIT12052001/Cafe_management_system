@@ -6,8 +6,9 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Set;
 
-@NamedQuery(name = "Product.getAllProduct",query = "select new com.inn.cafe.wrapper.ProductWrapper(p.id,p.name,p.description,p.price,p.status,p.category.id,p.category.name) from Product p")
+@NamedQuery(name = "Product.getAllProduct",query = "select new com.inn.cafe.wrapper.ProductWrapper(p.id,p.name,p.description,p.price,p.status,p.category.id,p.category.name,i.name,i.type,i.picByte) from Product p LEFT JOIN p.productImage i")
 @NamedQuery(name = "Product.updateProductStatus", query = "update Product p set p.status=:status where p.id=:id")
 @NamedQuery(name = "Product.getProductByCategory", query = "select new com.inn.cafe.wrapper.ProductWrapper(p.id,p.name) from Product p where p.category.id=:id and p.status='true'")
 @NamedQuery(name = "Product.getProductById", query = "select new com.inn.cafe.wrapper.ProductWrapper(p.id,p.name,p.description,p.price) from Product p where p.id=:id")
@@ -38,6 +39,25 @@ public class Product implements Serializable {
 
     @Column(name = "status")
     private String status;
+
+    public Set<ImageModel> getProductImage() {
+        return productImage;
+    }
+
+    public void setProductImage(Set<ImageModel> productImage) {
+        this.productImage = productImage;
+    }
+
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(name = "product_images",
+            joinColumns = {
+                @JoinColumn(name = "product_id")
+            },
+            inverseJoinColumns = {
+                @JoinColumn(name = "image_id")
+            }
+    )
+    private Set<ImageModel> productImage;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_fk",nullable = false)

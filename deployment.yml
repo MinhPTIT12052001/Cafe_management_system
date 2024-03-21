@@ -1,0 +1,49 @@
+
+version: '3.7'
+services:
+#database
+  mysql8-container:
+    container_name: mysql8-container
+    image: mysql:8.0.34
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: cafe_shop
+    ports: 
+      - 3307:3306
+    volumes: 
+      - ./sql/cafe_shop.sql:/docker-entrypoint-initdb.d/init-script.sql
+
+#backend
+  cafeshop-spring-container:
+    container_name: cafeshop-spring-container
+    build:
+      context: ./com.inn.cafe
+      dockerfile: Dockerfile
+    ports:
+      - 8081:8081
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql8-container:3306/cafe_shop
+      MYSQL_ROOT_PASSWORD: 123456
+    depends_on: 
+      - mysql8-container
+
+#fontend
+  cafeshop-angular-container:
+    container_name: cafeshop-angular-container
+    build: 
+      context: ./cafe_fontend
+      dockerfile: Dockerfile
+    ports:
+      - 4301:80
+    depends_on: 
+      - cafeshop-spring-container
+
+
+
+
+#docker-compose -f ./deployment.yml up -d mysql8-container
+
+#docker-compose -f ./deployment.yml up -d cafeshop-spring-container --build
+
+#docker-compose -f ./deployment.yml up -d cafeshop-angular-container --build
